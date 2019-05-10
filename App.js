@@ -11,15 +11,16 @@ import {
   Keyboard
 } from "react-native";
 
-const currencyPerRupee = {
-  DOLLAR: 0.014,
-  EURO: 0.012,
-  PND: 0.01,
-  AUS: 0.02,
-  YEN: 1.57,
-  DIN: 0.004351
-};
+// const currencyPerRupee = {
+//   DOLLAR: 0.014,
+//   EURO: 0.012,
+//   PND: 0.01,
+//   AUS: 0.02,
+//   YEN: 1.57,
+//   DIN: 0.004351
+// };
 
+const url = "https://api.exchangeratesapi.io/latest?base=INR";
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -34,9 +35,20 @@ export default class App extends React.Component {
       Alert.alert("Enter some value");
     } else {
       if (!isNaN(this.state.inputValue)) {
-        var result =
-          parseFloat(this.state.inputValue) * currencyPerRupee[currency];
-        this.setState({ resultValue: result.toFixed(2) });
+        fetch(url)
+          .then(response => {
+            return response.json();
+          })
+          .then(data => {
+            //woking with JSON data here
+            // var result =
+            //   parseFloat(this.state.inputValue) * currencyPerRupee[currency];
+            //api wala data
+            let factor = data.rates[currency];
+            var result = parseFloat(this.state.inputValue) * factor;
+
+            this.setState({ resultValue: result.toFixed(2) });
+          });
       } else {
         Alert.alert("Enter Numeric value");
       }
